@@ -15,9 +15,11 @@ Virology has always excited me, and with the coronavirus looming around everywhe
 
 
 ```{R}
+options(repos="https://cran.rstudio.com" )
 library(dplyr)
 library(ggplot2)
-COVID_and_SARS <-read.csv("/stor/home/mki77/COVID_and_SARS.csv")
+library(readxl)
+COVID_and_SARS <- read_excel("C:/Users/Melodie/Desktop/COVID_and_SARS.xlsx")
 COVID_and_SARS<-COVID_and_SARS%>%slice(1:70)
 COVID <-COVID_and_SARS%>%select(Date.Rank, Sum.of.COVID.Confirmed, Sum.of.COVID.Deaths)
 SARS<-COVID_and_SARS%>%select(by=-c(Sum.of.COVID.Confirmed, Sum.of.COVID.Deaths))%>%
