@@ -1,0 +1,16 @@
+"0","knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = ""center"", warning = F, message = F,"
+"0","tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))"
+"2","Warning messages:
+"
+"2","1: "
+"2","In read_utf8(f) :"
+"2","
+ "
+"2"," The file content/project1.Rmd is not encoded in UTF-8. These lines contain invalid UTF-8 characters: 9, 10, 11
+"
+"2","2: "
+"2","In read_utf8(f) :"
+"2","
+ "
+"2"," The file content/project1.Rmd is not encoded in UTF-8. These lines contain invalid UTF-8 characters: 9, 10, 11
+"

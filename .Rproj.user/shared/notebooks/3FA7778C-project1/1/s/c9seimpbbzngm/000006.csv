@@ -1,0 +1,8 @@
+"0","library(dplyr)"
+"0","library(ggplot2)"
+"0","library(readxl)"
+"0","COVID_and_SARS <- read_excel(""C:/Users/Melodie/Desktop/COVID_and_SARS.xlsx"")"
+"0","COVID_and_SARS<-COVID_and_SARS%>%slice(1:70)"
+"0","COVID <-COVID_and_SARS%>%select(Date.Rank, Sum.of.COVID.Confirmed, Sum.of.COVID.Deaths)"
+"0","SARS<-COVID_and_SARS%>%select(by=-c(Sum.of.COVID.Confirmed, Sum.of.COVID.Deaths))%>%"
+"0","  select(Day=Date.Rank, Sum.of.Sars.Deaths, Sum.of.Sars.Confirmed)"
