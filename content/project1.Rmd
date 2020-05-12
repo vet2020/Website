@@ -16,7 +16,7 @@ Virology has always excited me, and with the coronavirus looming around everywhe
 
 ```{R}
 options(repos="https://cran.rstudio.com" )
-library(dplyr)
+library(dplyr); library(formatR)
 library(ggplot2)
 library(readxl)
 COVID_and_SARS <- read_excel("C:/Users/Melodie/Desktop/COVID_and_SARS.xlsx")
