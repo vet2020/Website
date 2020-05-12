@@ -2,8 +2,8 @@
 title: "Sars vs. COVID-19"
 author: "Melodie Irvin, mki77"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 Date: 3/15/2020
 ---
 ```{r setup, include=FALSE}
