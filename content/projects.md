@@ -1,11 +1,10 @@
 ---
-categories:
-- projects
-date: "2016-10-02T22:55:05-04:00"
-showpagemeta: false
-tags:
-- projects
-title: Projects
+title: "Projects"
+date: '2016-10-02T22:55:05-04:00'
+output: pdf_document
+showpagemeta: no
+tags: projects
+categories: projects
 ---
 ## Projects 
 
