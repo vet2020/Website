@@ -6,7 +6,6 @@
     <description>Recent content in projects on Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
     
 	<atom:link href="/tags/projects/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,10 +13,13 @@
     <item>
       <title>Projects</title>
       <link>/projects/</link>
-      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/projects/</guid>
-      <description></description>
+      <description>Projects Here are some projects I have recently completed:
+  Exploratory Data Analysis with Tidyverse Tools
+  Modeling, Testing, and Classification
+  </description>
     </item>
     
   </channel>

@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Melodie Irvin" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Sars vs. COVID-19</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume.pdf/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Sars vs. COVID-19</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p>Virology has always excited me, and with the coronavirus looming around everywhere we go, I found it compelling to compare the current data regarding the deaths and confirmed cases of COVID-19 with it’s sister virus, SARS-CoV from 2003. Considering they are of the same genus and species of virus, I was expecting to find similar results regarding the number of deaths and rate of infection. As you will see, that is not at all the case. The Sars dataset was gathered from Kaggle while the COVID dataset was taken from ourworldindata.org. Both were combined in Excel prior to importing. The COVID dataset is up-to-date as of March 13, 2020.</p>
+<pre class="r"><code>options(repos = &quot;https://cran.rstudio.com&quot;)
+library(dplyr)
+library(formatR)
+library(ggplot2)
+library(readxl)
+COVID_and_SARS &lt;- read_excel(&quot;C:/Users/Melodie/Desktop/COVID_and_SARS.xlsx&quot;)
+COVID_and_SARS &lt;- COVID_and_SARS %&gt;% slice(1:70)
+COVID &lt;- COVID_and_SARS %&gt;% select(Date.Rank, Sum.of.COVID.Confirmed, 
+    Sum.of.COVID.Deaths)
+SARS &lt;- COVID_and_SARS %&gt;% select(by = -c(Sum.of.COVID.Confirmed, 
+    Sum.of.COVID.Deaths)) %&gt;% select(Day = Date.Rank, Sum.of.Sars.Deaths, 
+    Sum.of.Sars.Confirmed)</code></pre>
+<pre class="r"><code>library(tidyverse)
+FULL &lt;- full_join(COVID, SARS, by = c(Date.Rank = &quot;Day&quot;))
+FULL_2 &lt;- FULL %&gt;% mutate(Week.Number = case_when(between(Date.Rank, 
+    1, 7) ~ &quot;Week One&quot;, between(Date.Rank, 8, 14) ~ &quot;Week Two&quot;, 
+    between(Date.Rank, 15, 21) ~ &quot;Week Three&quot;, between(Date.Rank, 
+        22, 28) ~ &quot;Week Four&quot;, between(Date.Rank, 29, 35) ~ &quot;Week Five&quot;, 
+    between(Date.Rank, 36, 42) ~ &quot;Week Six&quot;, between(Date.Rank, 
+        43, 49) ~ &quot;Week Seven&quot;, between(Date.Rank, 50, 56) ~ 
+        &quot;Week Eight&quot;, between(Date.Rank, 57, 63) ~ &quot;Week Nine&quot;, 
+    between(Date.Rank, 64, 70) ~ &quot;Week Ten&quot;, between(Date.Rank, 
+        71, 77) ~ &quot;Week Eleven&quot;, between(Date.Rank, 78, 84) ~ 
+        &quot;Week Twelve&quot;, between(Date.Rank, 85, 91) ~ &quot;Week Thirteen&quot;, 
+    between(Date.Rank, 92, 96) ~ &quot;Week Fourteen&quot;)) %&gt;% select(Date.Rank, 
+    Sum.of.COVID.Confirmed, Sum.of.Sars.Confirmed, Sum.of.COVID.Deaths, 
+    Sum.of.Sars.Deaths, Week.Number)
+FULL_New &lt;- FULL_2 %&gt;% arrange(Date.Rank) %&gt;% mutate(COVID.New.Cases = Sum.of.COVID.Confirmed - 
+    lag(Sum.of.COVID.Confirmed)) %&gt;% mutate(COVID.New.Deaths = Sum.of.COVID.Deaths - 
+    lag(Sum.of.COVID.Deaths)) %&gt;% mutate(Sars.New.Cases = Sum.of.Sars.Confirmed - 
+    lag(Sum.of.Sars.Confirmed)) %&gt;% mutate(Sars.New.Deaths = Sum.of.Sars.Deaths - 
+    lag(Sum.of.Sars.Deaths)) %&gt;% select(Date.Rank, Sum.of.COVID.Confirmed, 
+    Sum.of.Sars.Confirmed, Sum.of.COVID.Deaths, Sum.of.Sars.Deaths, 
+    COVID.New.Cases, Sars.New.Cases, COVID.New.Deaths, Sars.New.Deaths, 
+    Week.Number)</code></pre>
+<p>Given that this data is tidy, the pivot_longer and pivot_wider fuctions will be used in another section. The object of using those functions, however, is to organize data so that each observation has it’s own row and each variable has it’s own column. I chose to do a full_join of the data because I imported a single dataset and wanted to ensure I kept all components, therefore, no results were lost. A few additional columns were made for gathering summary statistics as well as to create a categorical variable.</p>
+<pre class="r"><code>FULL_New %&gt;% filter(between(Date.Rank, 25, 50))</code></pre>
+<pre><code>## # A tibble: 26 x 10
+##    Date.Rank Sum.of.COVID.Co~ Sum.of.Sars.Con~ Sum.of.COVID.De~ Sum.of.Sars.Dea~
+##        &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1        25            49053             3233             1383              144
+##  2        26            50580             3298             1526              154
+##  3        27            51857             3357             1669              159
+##  4        28            71429             3448             1775              165
+##  5        29            73332             3595             1873              182
+##  6        30            75204             4090             2009              182
+##  7        31            75748             4180             2129              217
+##  8        32            76769             4561             2247              229
+##  9        33            77794             4713             2359              251
+## 10        34            78811             4921             2463              263
+## # ... with 16 more rows, and 5 more variables: COVID.New.Cases &lt;dbl&gt;,
+## #   Sars.New.Cases &lt;dbl&gt;, COVID.New.Deaths &lt;dbl&gt;, Sars.New.Deaths &lt;dbl&gt;,
+## #   Week.Number &lt;chr&gt;</code></pre>
+<pre class="r"><code>FULL_New %&gt;% select(Sum.of.COVID.Confirmed, Sum.of.Sars.Confirmed, 
+    everything()) %&gt;% arrange(desc(Sum.of.COVID.Confirmed))</code></pre>
+<pre><code>## # A tibble: 70 x 10
+##    Sum.of.COVID.Co~ Sum.of.Sars.Con~ Date.Rank Sum.of.COVID.De~ Sum.of.Sars.Dea~
+##               &lt;dbl&gt;            &lt;dbl&gt;     &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1           132758             7624        53             4955              610
+##  2           125260             7569        52             4613              597
+##  3           118319             7467        51             4292              586
+##  4           113702             7445        50             4012              572
+##  5           109577             7404        49             3809              551
+##  6           105592             7280        48             3584              525
+##  7           101927             7178        47             3486              513
+##  8            98192             7074        46             3380              505
+##  9            95324             6923        45             3280              494
+## 10            93090             6800        44             3198              477
+## # ... with 60 more rows, and 5 more variables: COVID.New.Cases &lt;dbl&gt;,
+## #   Sars.New.Cases &lt;dbl&gt;, COVID.New.Deaths &lt;dbl&gt;, Sars.New.Deaths &lt;dbl&gt;,
+## #   Week.Number &lt;chr&gt;</code></pre>
+<pre class="r"><code>FULL_New %&gt;% slice(1:53) %&gt;% group_by(Week.Number) %&gt;% summarize(mean_COVNew = mean(COVID.New.Cases, 
+    na.rm = T), sd_COVNew = sd(COVID.New.Cases, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 8 x 3
+##   Week.Number mean_COVNew sd_COVNew
+##   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Week Eight        5795.     1672.
+## 2 Week Five         1129.      563.
+## 3 Week Four         4411.     6698.
+## 4 Week One           419.      286.
+## 5 Week Seven        2947       847.
+## 6 Week Six          1374.      402.
+## 7 Week Three        3309       423.
+## 8 Week Two          2085.      484.</code></pre>
+<pre class="r"><code>FULL_New %&gt;% slice(1:53) %&gt;% summarize(median(Sum.of.COVID.Confirmed))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(Sum.of.COVID.Confirmed)`
+##                              &lt;dbl&gt;
+## 1                            51857</code></pre>
+<pre class="r"><code>FULL_New %&gt;% summarize(median(Sum.of.Sars.Confirmed))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `median(Sum.of.Sars.Confirmed)`
+##                             &lt;dbl&gt;
+## 1                           5212.</code></pre>
+<pre class="r"><code>FULL_New %&gt;% slice(1:53) %&gt;% summarize(first(Sum.of.COVID.Deaths), 
+    last(Sum.of.COVID.Deaths), n_Week = n_distinct(Week.Number))</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   `first(Sum.of.COVID.Deaths)` `last(Sum.of.COVID.Deaths)` n_Week
+##                          &lt;dbl&gt;                       &lt;dbl&gt;  &lt;int&gt;
+## 1                            6                        4955      8</code></pre>
+<pre class="r"><code>FULL_New %&gt;% summarize(first(Sum.of.Sars.Deaths), last(Sum.of.Sars.Deaths), 
+    n_Week = n_distinct(Week.Number))</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   `first(Sum.of.Sars.Deaths)` `last(Sum.of.Sars.Deaths)` n_Week
+##                         &lt;dbl&gt;                      &lt;dbl&gt;  &lt;int&gt;
+## 1                           4                        774     10</code></pre>
+<pre class="r"><code>FULL_New %&gt;% group_by(Week.Number) %&gt;% summarize(mean_SARNew = mean(Sars.New.Cases, 
+    na.rm = T), sd_SARNew = sd(Sars.New.Cases, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 10 x 3
+##    Week.Number mean_SARNew sd_SARNew
+##    &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Week Eight        52.9      26.5 
+##  2 Week Five        237.      146.  
+##  3 Week Four         95.9      53.7 
+##  4 Week Nine         36.7      17.4 
+##  5 Week One          59.2      30.6 
+##  6 Week Seven       126.       19.9 
+##  7 Week Six         202        65.2 
+##  8 Week Ten           9.57      6.53
+##  9 Week Three       129.      135.  
+## 10 Week Two         193.      288.</code></pre>
+<pre class="r"><code>FULL_New %&gt;% na.omit %&gt;% summarize(cor(Sars.New.Cases, COVID.New.Cases))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `cor(Sars.New.Cases, COVID.New.Cases)`
+##                                    &lt;dbl&gt;
+## 1                                 -0.124</code></pre>
+<pre class="r"><code>FULL_New %&gt;% slice(1:53) %&gt;% summarize(mean_CNC = mean(COVID.New.Cases, 
+    na.rm = T), sd(COVID.New.Cases, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   mean_CNC `sd(COVID.New.Cases, na.rm = T)`
+##      &lt;dbl&gt;                            &lt;dbl&gt;
+## 1    2548.                            2841.</code></pre>
+<pre class="r"><code>FULL_New %&gt;% na.omit %&gt;% summarize(var(COVID.New.Cases, COVID.New.Deaths))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `var(COVID.New.Cases, COVID.New.Deaths)`
+##                                      &lt;dbl&gt;
+## 1                                   81616.</code></pre>
+<p>Given the amount of numeric varibles in the dataset, I only performed summary statistics on a few using the core dplyr functions. In order to find the difference in statistics on a set day, I filtered by date rank and found that the number of confirmed COVID cases on day 25 was more than 1500 percent of Sars cases on the same day in 2003. In addition, I selected the sums of COVID deaths and Sars deaths and arranged it in descending order of COVID deaths. Considering the COVID dataset was up-to-date as of March 13 (Day 53), I wanted to compare the values of both viruses. As of this time, the COVID death rate is around 3.73%, while the Sars virus from onset to conclusion resulted in around a 9.56% death rate. In other words, Sars was not as successful at spreading to as many hosts as COVID, but the people that contracted Sars had a higher chance of mortality than ones that have contracted COVID. The group_by function allowed me to group the categories based on week number and further summarize to find the mean and standard deviation of the variable regarding new cases of COVID per week. As shown, the highest average new cases for COVID occurred in the most recent week (week 8), while the highest for Sars came in week four. Considering some of the variable observations were accumulations, I took the median number for both regarding the sum of confirmed cases. COVID’s median was 51,857 in 53 observations, while Sars median was 5,211 in 70 observations. This can be used as an indicator of the quantity of cases at half the time; days were used as the factor in this case. First and last sums of deaths were found to be four on day one and 774 on the last day for Sars virus. A correlation was done between new cases of Sars and new cases of COVID and was found to have a slighty negative correlation.</p>
+<pre class="r"><code>library(tidyverse)
+library(kableExtra)
+COOR &lt;- FULL_New %&gt;% na.omit %&gt;% select_if(is.numeric)
+kable(COOR) %&gt;% kable_styling(fixed_thead = T)</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Date.Rank
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sum.of.COVID.Confirmed
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sum.of.Sars.Confirmed
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sum.of.COVID.Deaths
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sum.of.Sars.Deaths
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+COVID.New.Cases
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sars.New.Cases
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+COVID.New.Deaths
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+Sars.New.Deaths
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+314
+</td>
+<td style="text-align:right;">
+231
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+581
+</td>
+<td style="text-align:right;">
+278
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+267
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+846
+</td>
+<td style="text-align:right;">
+317
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+265
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1320
+</td>
+<td style="text-align:right;">
+362
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+474
+</td>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+403
+</td>
+<td style="text-align:right;">
+56
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+694
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+2798
+</td>
+<td style="text-align:right;">
+522
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+784
+</td>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+4593
+</td>
+<td style="text-align:right;">
+554
+</td>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+1795
+</td>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+6065
+</td>
+<td style="text-align:right;">
+1392
+</td>
+<td style="text-align:right;">
+132
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+1472
+</td>
+<td style="text-align:right;">
+838
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+32
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+7818
+</td>
+<td style="text-align:right;">
+1478
+</td>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+1753
+</td>
+<td style="text-align:right;">
+86
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+9826
+</td>
+<td style="text-align:right;">
+1555
+</td>
+<td style="text-align:right;">
+213
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+2008
+</td>
+<td style="text-align:right;">
+77
+</td>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+11953
+</td>
+<td style="text-align:right;">
+1619
+</td>
+<td style="text-align:right;">
+259
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+2127
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+14557
+</td>
+<td style="text-align:right;">
+1690
+</td>
+<td style="text-align:right;">
+305
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:right;">
+2604
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+17391
+</td>
+<td style="text-align:right;">
+1871
+</td>
+<td style="text-align:right;">
+362
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:right;">
+2834
+</td>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+20630
+</td>
+<td style="text-align:right;">
+2289
+</td>
+<td style="text-align:right;">
+426
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+3239
+</td>
+<td style="text-align:right;">
+418
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+24544
+</td>
+<td style="text-align:right;">
+2338
+</td>
+<td style="text-align:right;">
+492
+</td>
+<td style="text-align:right;">
+79
+</td>
+<td style="text-align:right;">
+3914
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+28276
+</td>
+<td style="text-align:right;">
+2419
+</td>
+<td style="text-align:right;">
+565
+</td>
+<td style="text-align:right;">
+84
+</td>
+<td style="text-align:right;">
+3732
+</td>
+<td style="text-align:right;">
+81
+</td>
+<td style="text-align:right;">
+73
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+31481
+</td>
+<td style="text-align:right;">
+2479
+</td>
+<td style="text-align:right;">
+638
+</td>
+<td style="text-align:right;">
+89
+</td>
+<td style="text-align:right;">
+3205
+</td>
+<td style="text-align:right;">
+60
+</td>
+<td style="text-align:right;">
+73
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+34886
+</td>
+<td style="text-align:right;">
+2660
+</td>
+<td style="text-align:right;">
+724
+</td>
+<td style="text-align:right;">
+98
+</td>
+<td style="text-align:right;">
+3405
+</td>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+86
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+37558
+</td>
+<td style="text-align:right;">
+2725
+</td>
+<td style="text-align:right;">
+813
+</td>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+2672
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:right;">
+89
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+40554
+</td>
+<td style="text-align:right;">
+2777
+</td>
+<td style="text-align:right;">
+910
+</td>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+2996
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+43103
+</td>
+<td style="text-align:right;">
+2843
+</td>
+<td style="text-align:right;">
+1018
+</td>
+<td style="text-align:right;">
+111
+</td>
+<td style="text-align:right;">
+2549
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+108
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+45171
+</td>
+<td style="text-align:right;">
+2952
+</td>
+<td style="text-align:right;">
+1115
+</td>
+<td style="text-align:right;">
+116
+</td>
+<td style="text-align:right;">
+2068
+</td>
+<td style="text-align:right;">
+109
+</td>
+<td style="text-align:right;">
+97
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+46997
+</td>
+<td style="text-align:right;">
+3022
+</td>
+<td style="text-align:right;">
+1369
+</td>
+<td style="text-align:right;">
+119
+</td>
+<td style="text-align:right;">
+1826
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+254
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+49053
+</td>
+<td style="text-align:right;">
+3233
+</td>
+<td style="text-align:right;">
+1383
+</td>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+2056
+</td>
+<td style="text-align:right;">
+211
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+50580
+</td>
+<td style="text-align:right;">
+3298
+</td>
+<td style="text-align:right;">
+1526
+</td>
+<td style="text-align:right;">
+154
+</td>
+<td style="text-align:right;">
+1527
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+51857
+</td>
+<td style="text-align:right;">
+3357
+</td>
+<td style="text-align:right;">
+1669
+</td>
+<td style="text-align:right;">
+159
+</td>
+<td style="text-align:right;">
+1277
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:right;">
+143
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+71429
+</td>
+<td style="text-align:right;">
+3448
+</td>
+<td style="text-align:right;">
+1775
+</td>
+<td style="text-align:right;">
+165
+</td>
+<td style="text-align:right;">
+19572
+</td>
+<td style="text-align:right;">
+91
+</td>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:right;">
+73332
+</td>
+<td style="text-align:right;">
+3595
+</td>
+<td style="text-align:right;">
+1873
+</td>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+1903
+</td>
+<td style="text-align:right;">
+147
+</td>
+<td style="text-align:right;">
+98
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+75204
+</td>
+<td style="text-align:right;">
+4090
+</td>
+<td style="text-align:right;">
+2009
+</td>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+1872
+</td>
+<td style="text-align:right;">
+495
+</td>
+<td style="text-align:right;">
+136
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+75748
+</td>
+<td style="text-align:right;">
+4180
+</td>
+<td style="text-align:right;">
+2129
+</td>
+<td style="text-align:right;">
+217
+</td>
+<td style="text-align:right;">
+544
+</td>
+<td style="text-align:right;">
+90
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+32
+</td>
+<td style="text-align:right;">
+76769
+</td>
+<td style="text-align:right;">
+4561
+</td>
+<td style="text-align:right;">
+2247
+</td>
+<td style="text-align:right;">
+229
+</td>
+<td style="text-align:right;">
+1021
+</td>
+<td style="text-align:right;">
+381
+</td>
+<td style="text-align:right;">
+118
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+77794
+</td>
+<td style="text-align:right;">
+4713
+</td>
+<td style="text-align:right;">
+2359
+</td>
+<td style="text-align:right;">
+251
+</td>
+<td style="text-align:right;">
+1025
+</td>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+22
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+78811
+</td>
+<td style="text-align:right;">
+4921
+</td>
+<td style="text-align:right;">
+2463
+</td>
+<td style="text-align:right;">
+263
+</td>
+<td style="text-align:right;">
+1017
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+79331
+</td>
+<td style="text-align:right;">
+5105
+</td>
+<td style="text-align:right;">
+2618
+</td>
+<td style="text-align:right;">
+274
+</td>
+<td style="text-align:right;">
+520
+</td>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+155
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+36
+</td>
+<td style="text-align:right;">
+80239
+</td>
+<td style="text-align:right;">
+5318
+</td>
+<td style="text-align:right;">
+2700
+</td>
+<td style="text-align:right;">
+293
+</td>
+<td style="text-align:right;">
+908
+</td>
+<td style="text-align:right;">
+213
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+81109
+</td>
+<td style="text-align:right;">
+5504
+</td>
+<td style="text-align:right;">
+2762
+</td>
+<td style="text-align:right;">
+321
+</td>
+<td style="text-align:right;">
+870
+</td>
+<td style="text-align:right;">
+186
+</td>
+<td style="text-align:right;">
+62
+</td>
+<td style="text-align:right;">
+28
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+82294
+</td>
+<td style="text-align:right;">
+5688
+</td>
+<td style="text-align:right;">
+2804
+</td>
+<td style="text-align:right;">
+353
+</td>
+<td style="text-align:right;">
+1185
+</td>
+<td style="text-align:right;">
+184
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+32
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+83652
+</td>
+<td style="text-align:right;">
+5870
+</td>
+<td style="text-align:right;">
+2858
+</td>
+<td style="text-align:right;">
+372
+</td>
+<td style="text-align:right;">
+1358
+</td>
+<td style="text-align:right;">
+182
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+85403
+</td>
+<td style="text-align:right;">
+6211
+</td>
+<td style="text-align:right;">
+2924
+</td>
+<td style="text-align:right;">
+391
+</td>
+<td style="text-align:right;">
+1751
+</td>
+<td style="text-align:right;">
+341
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+87137
+</td>
+<td style="text-align:right;">
+6349
+</td>
+<td style="text-align:right;">
+2977
+</td>
+<td style="text-align:right;">
+417
+</td>
+<td style="text-align:right;">
+1734
+</td>
+<td style="text-align:right;">
+138
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+88948
+</td>
+<td style="text-align:right;">
+6519
+</td>
+<td style="text-align:right;">
+3043
+</td>
+<td style="text-align:right;">
+435
+</td>
+<td style="text-align:right;">
+1811
+</td>
+<td style="text-align:right;">
+170
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+90869
+</td>
+<td style="text-align:right;">
+6671
+</td>
+<td style="text-align:right;">
+3112
+</td>
+<td style="text-align:right;">
+460
+</td>
+<td style="text-align:right;">
+1921
+</td>
+<td style="text-align:right;">
+152
+</td>
+<td style="text-align:right;">
+69
+</td>
+<td style="text-align:right;">
+25
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+44
+</td>
+<td style="text-align:right;">
+93090
+</td>
+<td style="text-align:right;">
+6800
+</td>
+<td style="text-align:right;">
+3198
+</td>
+<td style="text-align:right;">
+477
+</td>
+<td style="text-align:right;">
+2221
+</td>
+<td style="text-align:right;">
+129
+</td>
+<td style="text-align:right;">
+86
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+95324
+</td>
+<td style="text-align:right;">
+6923
+</td>
+<td style="text-align:right;">
+3280
+</td>
+<td style="text-align:right;">
+494
+</td>
+<td style="text-align:right;">
+2234
+</td>
+<td style="text-align:right;">
+123
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:right;">
+98192
+</td>
+<td style="text-align:right;">
+7074
+</td>
+<td style="text-align:right;">
+3380
+</td>
+<td style="text-align:right;">
+505
+</td>
+<td style="text-align:right;">
+2868
+</td>
+<td style="text-align:right;">
+151
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+101927
+</td>
+<td style="text-align:right;">
+7178
+</td>
+<td style="text-align:right;">
+3486
+</td>
+<td style="text-align:right;">
+513
+</td>
+<td style="text-align:right;">
+3735
+</td>
+<td style="text-align:right;">
+104
+</td>
+<td style="text-align:right;">
+106
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:right;">
+105592
+</td>
+<td style="text-align:right;">
+7280
+</td>
+<td style="text-align:right;">
+3584
+</td>
+<td style="text-align:right;">
+525
+</td>
+<td style="text-align:right;">
+3665
+</td>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+98
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+109577
+</td>
+<td style="text-align:right;">
+7404
+</td>
+<td style="text-align:right;">
+3809
+</td>
+<td style="text-align:right;">
+551
+</td>
+<td style="text-align:right;">
+3985
+</td>
+<td style="text-align:right;">
+124
+</td>
+<td style="text-align:right;">
+225
+</td>
+<td style="text-align:right;">
+26
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+113702
+</td>
+<td style="text-align:right;">
+7445
+</td>
+<td style="text-align:right;">
+4012
+</td>
+<td style="text-align:right;">
+572
+</td>
+<td style="text-align:right;">
+4125
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+203
+</td>
+<td style="text-align:right;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+118319
+</td>
+<td style="text-align:right;">
+7467
+</td>
+<td style="text-align:right;">
+4292
+</td>
+<td style="text-align:right;">
+586
+</td>
+<td style="text-align:right;">
+4617
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+280
+</td>
+<td style="text-align:right;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:right;">
+125260
+</td>
+<td style="text-align:right;">
+7569
+</td>
+<td style="text-align:right;">
+4613
+</td>
+<td style="text-align:right;">
+597
+</td>
+<td style="text-align:right;">
+6941
+</td>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+321
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+132758
+</td>
+<td style="text-align:right;">
+7624
+</td>
+<td style="text-align:right;">
+4955
+</td>
+<td style="text-align:right;">
+610
+</td>
+<td style="text-align:right;">
+7498
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:right;">
+342
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>Tidycor &lt;- cor(COOR) %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    pivot_longer(-1, names_to = &quot;name&quot;, values_to = &quot;correlation&quot;)
+head(Tidycor)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   rowname   name                   correlation
+##   &lt;chr&gt;     &lt;chr&gt;                        &lt;dbl&gt;
+## 1 Date.Rank Date.Rank                    1    
+## 2 Date.Rank Sum.of.COVID.Confirmed       0.991
+## 3 Date.Rank Sum.of.Sars.Confirmed        0.995
+## 4 Date.Rank Sum.of.COVID.Deaths          0.986
+## 5 Date.Rank Sum.of.Sars.Deaths           0.968
+## 6 Date.Rank COVID.New.Cases              0.254</code></pre>
+<pre class="r"><code>Tidycor %&gt;% ggplot(aes(rowname, name, fill = correlation)) + 
+    geom_tile() + scale_fill_gradient2(low = &quot;green&quot;, mid = &quot;purple&quot;, 
+    high = &quot;blue&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 4) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1)) + coord_fixed()</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(FULL_New, aes(Sum.of.Sars.Deaths, Sum.of.Sars.Confirmed, 
+    color = Week.Number)) + geom_point() + theme_light() + scale_x_continuous(breaks = seq(0, 
+    900, by = 100)) + scale_y_continuous(lim = c(0, 9000)) + 
+    ggtitle(&quot;Cases and Deaths of Sars-CoV&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(FULL_New, aes(x = Sum.of.COVID.Confirmed, y = Sum.of.COVID.Deaths, 
+    fill = Week.Number)) + geom_violin(trim = F) + geom_boxplot(width = 0.1) + 
+    ggtitle(&quot;Cases and Deaths of COVID-19&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-4-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(FULL_New, aes(x = Week.Number)) + geom_bar(aes(y = COVID.New.Cases), 
+    stat = &quot;summary&quot;, fun.y = &quot;mean&quot;) + ggtitle(&quot;Average New COVID Cases per Week&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-4-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A coorelation heatmap calculates an integer to represent the relationship between variables. A number of “1” indicates sameness between the two variables and any coorelation close to that is considered to have a strong relationship. Some examples of this are seen between the sum of COVID confirmed cases and the date. However, some variables, such as the sum of COVID deaths and Sars new cases had a correlation of “0”, meaning there is no relationship between the two. There were about equal distributions of strongly correlated variables as well as variables that had weak correlations. Only a few would be considered “moderate”, as is seen between the sum of COVID confirmed and COVID new cases.</p>
+<p>The cases and deaths of Sars virus were plotted with the color of dot indicating the week in which the deaths and cases occurred. The steepest slope which indicated the highest death rate per sum of cases happened around the onset of the virus and slowed toward its ending. There is a positive relationship between the two variables indicated by the positive slope of the line. As the sum of Sars deaths increased, the sum of confirmed cases increased.</p>
+<p>Box and whisker plots show summary statistics between variables. The box itself indicates the IQR, representing the length between the lower and upper quartile, the middle line indicates the median value, and the whiskers show minimums and maximums. This third plot illustrated the sum of COVID confirmed cases and sum of COVID deaths. As suspected, there was a positive relationship between the two with a steady increase. As can be seen by the spacing in the third plot, the highest increase in deaths occurred between week seven and eight.</p>
+<p>The final plot used stat=summary to find the mean of new COVID cases by week number. Week one had the lowest average new cases, with week five coming in at second lowest. The highest average new case count came from week eight, with close to 6,000 new cases.</p>
+<pre class="r"><code>library(cluster)
+Clustered &lt;- FULL_New %&gt;% dplyr::select(-Week.Number)
+Clustered1 &lt;- Clustered %&gt;% na.omit %&gt;% scale %&gt;% as.data.frame()
+sil_width &lt;- vector()
+for (i in 2:10) {
+    kms &lt;- kmeans(Clustered1, centers = i)
+    sil &lt;- silhouette(kms$cluster, dist(Clustered1))
+    sil_width[i] &lt;- mean(sil[, 3])
+}
+ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + scale_x_continuous(name = &quot;k&quot;, 
+    breaks = 1:10)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>pam1 &lt;- Clustered1 %&gt;% pam(k = 2)
+final &lt;- Clustered1 %&gt;% mutate(cluster = as.factor(pam1$clustering))
+confmat &lt;- final %&gt;% count(cluster) %&gt;% arrange(desc(n)) %&gt;% 
+    pivot_wider(names_from = &quot;cluster&quot;, values_from = &quot;n&quot;, values_fill = list(n = 0))
+confmat</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##     `1`   `2`
+##   &lt;int&gt; &lt;int&gt;
+## 1    27    25</code></pre>
+<pre class="r"><code>ggplot(final, aes(x = Sum.of.COVID.Deaths, y = Sum.of.Sars.Deaths, 
+    color = cluster)) + geom_point()</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(pam1, which = 2)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>According to the ggplot, the highest average silhouette width came from five clusters (.463), but the second highest was very close and suggested two (.459). Given it is better to choose fewer clusters to achieve parsimony, I decided to have two. The quantity of clusters recommended was based on all numeric variables in the dataset, but only the sums of COVID deaths and Sars deaths were visualized. As seen on the ggplot, there were no real “clusters” or clear separation, but more evenly spaced out points throughout the graph. Given the silhouette width used to derive the clusters was not very high, the cluster solution achieved did not elicit much information.</p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

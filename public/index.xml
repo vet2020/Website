@@ -6,19 +6,10 @@
     <description>Recent content on Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Projects</title>
-      <link>/projects/</link>
-      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
-      
-      <guid>/projects/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Hello R Markdown</title>
@@ -84,6 +75,27 @@ Follow the following steps:
       <guid>/project2/</guid>
       <description>Melodie Irvin, mki77
 Colic is a cause for many horse emergencies in veterinary medicine due to the severity of the abdominal obstructions that may occur. Colic itself is not a diagnosis, but rather a symptom of a larger problem that is usually found in the Gastrointestinal tract. This dataset, found on Kaggle, consists of different parameters measuring the health of 209 horses with colic. The main variables I will be focusing on are surgery (yes or no), outcome (lived or died), abdomen, total protein, and packed cell volume.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have recently completed:
+  Exploratory Data Analysis with Tidyverse Tools
+  Modeling, Testing, and Classification
+  </description>
+    </item>
+    
+    <item>
+      <title>Sars vs. COVID-19</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>Virology has always excited me, and with the coronavirus looming around everywhere we go, I found it compelling to compare the current data regarding the deaths and confirmed cases of COVID-19 with it’s sister virus, SARS-CoV from 2003. Considering they are of the same genus and species of virus, I was expecting to find similar results regarding the number of deaths and rate of infection. As you will see, that is not at all the case.</description>
     </item>
     
   </channel>
