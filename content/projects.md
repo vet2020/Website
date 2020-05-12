@@ -1,7 +1,9 @@
 ---
 title: "Projects"
-date: '2016-10-02T22:55:05-04:00'
-output: pdf_document
+date: '2020-5-12'
+output:
+  html_document:
+    df_print: paged
 showpagemeta: no
 tags: projects
 categories: projects
