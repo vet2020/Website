@@ -76,12 +76,12 @@
 <p>Colic is a cause for many horse emergencies in veterinary medicine due to the severity of the abdominal obstructions that may occur. Colic itself is not a diagnosis, but rather a symptom of a larger problem that is usually found in the Gastrointestinal tract. This dataset, found on Kaggle, consists of different parameters measuring the health of 209 horses with colic. The main variables I will be focusing on are surgery (yes or no), outcome (lived or died), abdomen, total protein, and packed cell volume. Total Protein is a measure of the total amount of Albumin and Globulin in the blood, and increased levels typically indicate dehydration in the mammal. Packed cell volume is a measure of the amount of red blood cells by volume in blood, and like total protein counts, an increase in levels may indicate dehydration. Dehydration that results in colic is a common problem that can be caused by a change in feed, in addition to a loss of water intake. This combination results in obstructions that occur in the abdomen. The variable for abdomen measures possible indexes of abdominal presentation. Distended large and small intestines typically indicate an obstruction present in the GI tract due to a mechanical impaction which often requires immediate surgery. Less severe abdominal findings, however, may not need surgery and can be fixed with the use of different types of medications.</p>
 <pre class="r"><code>options(repos=&quot;https://cran.rstudio.com&quot; )
 library(readxl);library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages ---------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## -- Attaching packages ----------------------------------------------------- tidyverse 1.3.0 --</code></pre>
 <pre><code>## v ggplot2 3.3.0     v purrr   0.3.4
 ## v tibble  3.0.1     v dplyr   0.8.5
 ## v tidyr   1.0.3     v stringr 1.4.0
 ## v readr   1.3.1     v forcats 0.5.0</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------------------------------------- tidyverse_conflicts() --
+<pre><code>## -- Conflicts -------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>horse &lt;- read_excel(&quot;C:/Users/Melodie/Desktop/horse.xlsx&quot;)
@@ -146,8 +146,8 @@ ggMarginal(p,type=&quot;density&quot;,xparams = list(bw=.5), yparams=list(bw=.5)
 <p><img src="/project2_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 <pre class="r"><code>cov(df)</code></pre>
 <pre><code>##                    total_protein packed_cell_volume
-## total_protein          1.0224616          0.5143044
-## packed_cell_volume     0.5143044          1.0859387</code></pre>
+## total_protein          0.9209440          0.4551591
+## packed_cell_volume     0.4551591          0.9797109</code></pre>
 <p>Given the large sample size and further confirmed with the ggplot, the data meets the assumption of multivariate normality. The data also appears to meet the assumption of homogenaity of covariances from the values presented in the table. Given the significance of the overall MANOVA, additional tests were performed to test significance for each variable using univariate ANOVAs. After these were found to be significant, pairwise t.tests were performed to test p-values of each combination of tested variables. A total of five tests were performed, and as such, the probability of a type-one error was given to be 22.6%. However, because of these multiple comparisons a bonferroni’s coorection was determined, giving a new significant p-value of .01. Even with this adjustment, all p-values remained significant, signifying that both outcomes were found to differ significantly from one another in terms of total protein and packed cell volume values.</p>
 <pre class="r"><code>samp_distn&lt;-vector()
 for(i in 1:5000){
@@ -261,10 +261,10 @@ samp_distn&lt;-replicate(5000, {
 })
 
 samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
-<pre><code>##   (Intercept) ageyoung      TP_c abdominal_distentionnone
-## 1    1.335566 1.960023 0.0356775                 1.787117
+<pre><code>##   (Intercept) ageyoung       TP_c abdominal_distentionnone
+## 1    1.330108 1.955963 0.03525096                 1.798377
 ##   abdominal_distentionsevere abdominal_distentionslight TP_c:surgeryyes
-## 1                   2.191141                   1.887153      0.05073462</code></pre>
+## 1                    2.18734                   1.888325      0.05121596</code></pre>
 <pre class="r"><code>fit&lt;-lm(packed_cell_volume~age+TP_c+abdominal_distention+surgery:TP_c, data=horse1)
 resids&lt;-fit$residuals 
 fitted&lt;-fit$fitted.values 
@@ -277,9 +277,9 @@ resid_resamp&lt;-replicate(5000,{
 
 resid_resamp%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
 <pre><code>##   (Intercept) ageyoung       TP_c abdominal_distentionnone
-## 1    1.300071 2.596722 0.03892757                 1.771604
+## 1    1.317154 2.666363 0.03841066                 1.763756
 ##   abdominal_distentionsevere abdominal_distentionslight TP_c:surgeryyes
-## 1                    2.19078                   1.804828      0.05054979</code></pre>
+## 1                   2.224895                   1.812228      0.05055222</code></pre>
 <p>The Bootstrapped standard errors caluculated were unexpectedly lower than all values from the original standard errors.This is an unusual finding given the Bootstrapped standard errors do not require assumptions to be met and thus a higher SE is expected. In addition, some Robust standard errors also did not increase, but rather decreased from the original. These decreases may have been becasue some violations in the data were met. The expected p-values for both Bootstrapped and Robust standard errors would likely be higher than the p-value for original, because they do not require assumptions to be met.</p>
 <pre class="r"><code>log_horse&lt;-horse%&gt;%mutate(y=ifelse(outcome==&quot;died&quot;,1,0))%&gt;%drop_na(abdominal_distention)
 head(log_horse)</code></pre>
@@ -455,54 +455,54 @@ head(x)%&gt;%glimpse()</code></pre>
 lasso&lt;-glmnet(x,y,family=&quot;binomial&quot;,lambda=cv$lambda.1se)
 coef(lasso) </code></pre>
 <pre><code>## 47 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
-##                                           s0
-## (Intercept)                      1.187066052
-## ageyoung                         0.093904350
-## temp_of_extremitiescool         -0.077716264
-## temp_of_extremitiesNA            0.274173882
-## temp_of_extremitiesnormal        0.012961828
-## temp_of_extremitieswarm         -0.166136917
-## peripheral_pulseincreased       -0.415380152
-## peripheral_pulseNA               .          
-## peripheral_pulsenormal           .          
-## peripheral_pulsereduced          .          
-## mucous_membranebright_red        0.065534531
-## mucous_membranedark_cyanotic     0.346347580
-## mucous_membraneNA                .          
-## mucous_membranenormal_pink      -0.119221283
-## mucous_membranepale_cyanotic     0.264180085
-## mucous_membranepale_pink         0.077846661
-## capillary_refill_timeless_3_sec  0.103858774
-## capillary_refill_timemore_3_sec  .          
-## capillary_refill_timeNA          .          
-## paindepressed                    0.054713245
-## painextreme_pain                 0.077293281
-## painmild_pain                   -0.101941096
-## painsevere_pain                  0.091323280
-## peristalsishypermotile          -0.050935230
-## peristalsishypomotile            0.132079115
-## peristalsisNA                   -0.123197686
-## peristalsisnormal                0.272609558
-## abdominal_distentionnone        89.351061133
-## abdominal_distentionsevere      -4.056741073
-## abdominal_distentionslight      69.295120062
-## nasogastric_tubenone            -0.057968356
-## nasogastric_tubesignificant      0.044924071
-## nasogastric_tubeslight           0.113822278
-## rectal_exam_fecesdecreased      -0.071183286
-## rectal_exam_fecesincreased       0.085099054
-## rectal_exam_fecesNA             -0.093317317
-## rectal_exam_fecesnormal         -0.152103908
-## abdomendistend_small             0.235291230
-## abdomenfirm                     -0.356209572
-## abdomenNA                       -0.001531667
-## abdomennormal                   -0.174829901
-## abdomenother                    -0.316352594
-## packed_cell_volume              -0.208354451
-## total_protein                    0.045521240
-## outcomelived                     .          
-## y                                .          
-## logit                           91.467214940</code></pre>
+##                                          s0
+## (Intercept)                      1.15819302
+## ageyoung                         0.10584728
+## temp_of_extremitiescool         -0.11365158
+## temp_of_extremitiesNA            0.23479488
+## temp_of_extremitiesnormal        .         
+## temp_of_extremitieswarm         -0.16102578
+## peripheral_pulseincreased       -0.42934004
+## peripheral_pulseNA               .         
+## peripheral_pulsenormal          -0.01967080
+## peripheral_pulsereduced          .         
+## mucous_membranebright_red        0.07218819
+## mucous_membranedark_cyanotic     0.34255304
+## mucous_membraneNA                .         
+## mucous_membranenormal_pink      -0.14249461
+## mucous_membranepale_cyanotic     0.28614614
+## mucous_membranepale_pink         0.05483444
+## capillary_refill_timeless_3_sec  0.06867253
+## capillary_refill_timemore_3_sec -0.03048682
+## capillary_refill_timeNA          .         
+## paindepressed                    0.18918257
+## painextreme_pain                 0.09464878
+## painmild_pain                    0.03421809
+## painsevere_pain                  .         
+## peristalsishypermotile          -0.09225069
+## peristalsishypomotile            0.12210759
+## peristalsisNA                   -0.11865496
+## peristalsisnormal                0.28421808
+## abdominal_distentionnone        88.03159190
+## abdominal_distentionsevere      -3.98929707
+## abdominal_distentionslight      68.27467154
+## nasogastric_tubenone            -0.10886664
+## nasogastric_tubesignificant      0.02224417
+## nasogastric_tubeslight           0.07968349
+## rectal_exam_fecesdecreased      -0.07556920
+## rectal_exam_fecesincreased       0.10070995
+## rectal_exam_fecesNA             -0.04527012
+## rectal_exam_fecesnormal         -0.11270227
+## abdomendistend_small             0.23920132
+## abdomenfirm                     -0.33128310
+## abdomenNA                        .         
+## abdomennormal                   -0.18558395
+## abdomenother                    -0.30086549
+## packed_cell_volume              -0.22509999
+## total_protein                    0.05133212
+## outcomelived                     .         
+## y                                .         
+## logit                           90.14078916</code></pre>
 <pre class="r"><code>horse2&lt;-log_horse%&gt;%mutate(Warm_temp=ifelse(temp_of_extremities==&quot;warm&quot;,1,0))%&gt;%
   mutate(Normal_pink=ifelse(mucous_membrane==&quot;normal_pink&quot;,1,0))%&gt;%
   mutate(Hypermotile=ifelse(peristalsis==&quot;hypermotile&quot;,1,0))%&gt;%
