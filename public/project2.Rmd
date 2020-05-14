@@ -1,9 +1,9 @@
 ---
 title: "Project 2: Horse Colic"
+date: '2020-05-12'
 output:
   html_document: default
   pdf_document: default
-Date: '2020-5-12'
 ---
 
 ```{r setup, include=FALSE}
