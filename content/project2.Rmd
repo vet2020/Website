@@ -3,13 +3,12 @@ title: "Project 2: Horse Colic"
 output:
   html_document: default
   pdf_document: default
+Date: '2020-5-12'
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-Melodie Irvin, mki77
 
 Colic is a cause for many horse emergencies in veterinary medicine due to the severity of the abdominal obstructions that may occur. Colic itself is not a diagnosis, but rather a symptom of a larger problem that is usually found in the Gastrointestinal tract. This dataset, found on Kaggle, consists of different parameters measuring the health of 209 horses with colic. The main variables I will be focusing on are surgery (yes or no), outcome (lived or died), abdomen, total protein, and packed cell volume. Total Protein is a measure of the total amount of Albumin and Globulin in the blood, and increased levels typically indicate dehydration in the mammal. Packed cell volume is a measure of the amount of red blood cells by volume in blood, and like total protein counts, an increase in levels may indicate dehydration. Dehydration that results in colic is a common problem that can be caused by a change in feed, in addition to a loss of water intake. This combination results in obstructions that occur in the abdomen. The variable for abdomen measures possible indexes of abdominal presentation. Distended large and small intestines typically indicate an obstruction present in the GI tract due to a mechanical impaction which often requires immediate surgery. Less severe abdominal findings, however, may not need surgery and can be fixed with the use of different types of medications.
 

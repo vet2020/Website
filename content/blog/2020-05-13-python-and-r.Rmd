@@ -1,0 +1,14 @@
+---
+title: Python and R
+author: Melodie Irvin
+date: '2020-05-13'
+slug: python-and-r
+categories: []
+tags: []
+description: ''
+---
+![](/blog/2020-05-13-python-and-r_files/rockem.png)
+
+R-Studio and Python are both fantastic coding programs that have the ability to work in tandem to share objects that can be used for manipulation in one language and visualization in the other, or vice versa.
+
+As seen in this example, 
