@@ -26,7 +26,7 @@ Now, we insert a Python chunk that has it's own new object, and is combined with
 best="Heartworm Prevention!"
 print(r.pets, r.are, best)
 ```
-Finally, we can see here that the same message will be revealed by combining the Python object with the other two objects from R, back into R!
+Finally, we can see here that the same message will be revealed by combining the Python object with the other two objects from R!
 
 ```{R}
 cat(c(pets,are,py$best))
