@@ -1,10 +1,10 @@
 /* Main page with stikky-footer */
 html, body {
   height: 100%;
-  background-color: #fff;
-  font-family: 'Source Sans Pro', sans-serif;
+  background-color: #e3d8d8;
+  font-family: 'FF Scala', serif;
   /* The html and body elements cannot have any padding or margin. */
-  border-top: 3px solid #6e3194;
+  border-top: 3px solid #e3d8d8;
 }
 
 /* Wrapper for page content to push down footer */
@@ -24,7 +24,7 @@ html, body {
 }
 .navbar-default {
   background-color: #9c139c;
-  border-color: #ffffff;
+  border-color: #c4b0af;
 }
 .navbar-default .navbar-brand {
   color: #decede;
@@ -43,7 +43,7 @@ html, body {
 }
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
   color: #decede;
-  background-color: #ffffff;
+  background-color: #c4b0af;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
   color: #decede;
@@ -53,7 +53,7 @@ html, body {
   border-color: #9c139c;
 }
 .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-  background-color: #ffffff;
+  background-color: #c4b0af;
 }
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #decede;
@@ -77,7 +77,7 @@ html, body {
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #4d494d;
-    background-color: #ffffff;
+    background-color: #c4b0af;
   }
 }
 
@@ -119,7 +119,7 @@ html, body {
   color: #6e3194;
 }
 .panel-default h4 a:hover, h5 a:hover {
-  color: #267723;
+  color: #c4b0af;
 }
 .panel{
   border-style: none;
