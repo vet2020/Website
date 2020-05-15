@@ -11,7 +11,7 @@ description: ''
 
 R-Studio and Python are both fantastic coding programs that have the ability to work in tandem to share objects. These can be used for manipulation in one language and visualization in the other, or vice versa.
 
-A simple example of this interaction is illustrated here: 
+*A simple example of this interaction is illustrated here:* 
 
 First, we have to use the package 'reticulate' to tell R to speak to Python, then add an object in R to be used by a Python chunk. (In this case, I added two.)
 
@@ -20,12 +20,14 @@ library(reticulate)
 pets<-"Keep your"
 are<-"pets on"
 ```
+
 Now, we insert a Python chunk that has it's own new object, and is combined with the others from the R chunk to tell an important message!
 
 ```{python}
 best="Heartworm Prevention!"
 print(r.pets, r.are, best)
 ```
+
 Finally, we can see here that the same message will be revealed by combining the Python object with the other two objects from R!
 
 ```{R}
